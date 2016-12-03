@@ -1,0 +1,22 @@
+[Twitter]
+consumer_key =
+consumer_secret =
+
+[King]
+access_token =
+access_token_secret =
+last_arrival_id =
+last_tweet_id =
+last_cabinet_decision_id =
+github_username =
+github_password =
+
+[Crown Prince]
+arrival_last_id =
+access_token =
+access_token_secret =
+
+[Deputy Crown Prince]
+arrival_last_id =
+access_token =
+access_token_secret = 
