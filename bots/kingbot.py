@@ -39,8 +39,7 @@ def get_arrival():
     new_news = []
     if int(last_arrival_id) > 0:
         new_news = spa.arrival_news(person = 1, last_id = int(last_arrival_id))
-    return new_news
-    
+    return new_news    
 
 def get_leave():
     '''Return list of all leave news after last_id
@@ -51,11 +50,9 @@ def get_leave():
         new_news = spa.leave_news(person = 1, last_id = int(last_arrival_id))
     return new_news
 
-
 def get_timeline(person, last_id):
     timeline = api.user_timeline(person, since_id=last_id)
     return timeline
-
 
 def get_royal_order():
     orders = []
@@ -63,19 +60,16 @@ def get_royal_order():
         orders = spa.royal_order(last_id=int(last_royal_order_id))
     return orders
 
-
 def get_cabinet_decision():
     decisions = []
     if int(last_cabinet_decision_id) > 0:
         decisions = spa.cabinet_decision(last_id=int(last_cabinet_decision_id))
     return decisions
 
-
 def update_config(section, key, value):
     config.set(section, key, value)
     with open(configfile, 'w') as cf:
         config.write(cf)
-
 
 def tweet(text, url = ''):
     if url !=  '':
@@ -84,10 +78,8 @@ def tweet(text, url = ''):
     else:
         api.update_status(text)
 
-
 def retweet(tweet_id):
     api.retweet(tweet_id)
-
 
 def retweet_with_comment(t_user, t_id, comment):
     url = 'https://twitter.com/{}/status/{}'.format(t_user, t_id)
@@ -96,12 +88,10 @@ def retweet_with_comment(t_user, t_id, comment):
 def update_twitter_location(clocation):
     api.update_profile(location=clocation)   
 
-
-def run():
+def run_arrival():
     # if there is arrival news update config file with the last id then loop 
     # and tweet the first one since it arrival news and person cann't be 
     # in two placess at the same time.
-    logging.info('Running kingbot...')
     logging.info('Checking new arrival news...')
     arrival_news = get_arrival()
     if arrival_news:
@@ -114,6 +104,7 @@ def run():
         logging.info('Updating config for arrival_last_id to: ' + arrival_news[0][0])
         update_config('King', 'last_arrival_id', arrival_news[0][0])
 
+def run_leave():
     # if there is leave news update config file with the last id then loop 
     # and tweet the first one since it leave news and person cann't be 
     # in two placess at the same time.
@@ -129,6 +120,7 @@ def run():
         logging.info('Updating config for arrival_last_id to: ' + leave_news[0][0])
         update_config('King', 'last_arrival_id', leave_news[0][0])
 
+def run_retweet():
     # if there is a new tweet retweet it and update the last_tweet_id
     logging.info('Checking new tweets to retweet...')
     timeline = get_timeline('KingSalman', int(last_tweet_id))
@@ -140,6 +132,7 @@ def run():
             logging.info('retweeting: ' + _tweet.id_str)
             retweet_with_comment('KingSalman', _tweet.id, 'قمت بكتابة هذه التغريدة:')
 
+def run_royal():
     # if there is a new royal order tweet it and add ticket on github repo royal-orders
     # and update the last_royal_order_id 
     logging.info('Checking new royal order...')
@@ -158,8 +151,9 @@ def run():
             tweet(_tweet_text, _order[2])
             logging.info('Creating github issue for: ' + _order[0])
             github.make_issue(repo='royal-orders', title=_order[1], body=_order[3])
-   
-   # if there is a new cabinet desision tweet it and add ticket on github repo
+
+def run_cabinet():
+    # if there is a new cabinet desision tweet it and add ticket on github repo
     # and update the last_cabinet_desisoin_id 
     logging.info('Checking new cabinet desison...')
     decisions = get_cabinet_decision()
@@ -177,6 +171,15 @@ def run():
             tweet(_tweet_text, _decision[2])
             logging.info('Creating github issue for: ' + _decision[0])
             github.make_issue(repo='cabinet-decisions' ,title=_decision[1], body=_decision[3])
+
+def run():
+    logging.info('--------------- STARTING  -------------------')
+    logging.info('Running kingbot...')
+    run_arrival()
+    run_leave()
+    run_retweet()
+    run_royal()
+    run_cabinet()    
     logging.info('--------------- DONE -------------------')
 
 
