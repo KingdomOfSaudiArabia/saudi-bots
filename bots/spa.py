@@ -98,6 +98,23 @@ def arrival_news(person, last_id=-1):
     return arrival_news
 
 
+def leave_news(person, last_id=-1):
+    '''Retrive only leave news for person
+    if last_id not defiend it will return the max
+    return list of leave news tuples up to MAX_PAGES_TO_SEARCH (page = 10 news)
+    [(id, title, url, locationFromTo)...]
+    '''
+    leave_news = []
+    all_news = retrieve_news(person=person, last_id= last_id)
+    for item in all_news:
+        if 'يغادر' in item[1]:
+            _list = list(item)
+            _list.insert(3, item[1].split('يغادر')[1])
+            item = tuple(_list)
+            leave_news.append(item)
+    return leave_news
+
+
 if __name__ == "__main__":
     # just for testing
     news = cabinet_decision()

@@ -41,6 +41,16 @@ def get_arrival():
     return new_news
     
 
+def get_leave():
+    '''Return list of all leave news after last_id
+    if there is no news empty list will be return
+    '''
+    new_news = []
+    if int(last_arrival_id) > 0:
+        new_news = spa.leave_news(person = 1, last_id = int(last_arrival_id))
+    return new_news
+
+
 def get_timeline(person, last_id):
     timeline = api.user_timeline(person, since_id=last_id)
     return timeline
@@ -95,6 +105,21 @@ def run():
         update_twitter_location(arrival_news[0][3])
         logging.info('Updating config for arrival_last_id to: ' + arrival_news[0][0])
         update_config('King', 'last_arrival_id', arrival_news[0][0])
+
+    # if there is leave news update config file with the last id then loop 
+    # and tweet the first one since it leave news and person cann't be 
+    # in two placess at the same time.
+    logging.info('Checking new leave news...')
+    leave_news = get_leave()
+    if leave_news:
+        logging.info('Found new leave to : ' + leave_news[0][3])
+        tweet_text = 'غادرت بحفظ الله ورعايته ' + leave_news[0][3]
+        logging.info('tweeting: ' + tweet_text)
+        tweet(tweet_text)
+        logging.info('Updating location to: ')
+        update_twitter_location(' ')
+        logging.info('Updating config for arrival_last_id to: ' + leave_news[0][0])
+        update_config('King', 'last_arrival_id', leave_news[0][0])
 
     # if there is a new tweet retweet it and update the last_tweet_id
     logging.info('Checking new tweets to retweet...')
