@@ -118,13 +118,13 @@ def run():
         for _decision in reversed(decisions):
             _title = _decision[1]
             if len(_title) > 107:
-                _title = _title[:len(_title)-110]
+                _title = _title[:len(_title)-(len(_title)-104)]
                 _title = _title + '...'
             _tweet_text = 'أمرت بـ: ' + _title
             logging.info('tweeting: ' + _tweet_text)
-            tweet(_tweet_text, _decision[2])
+            #tweet(_tweet_text, _decision[2])
             logging.info('Creating github issue for: ' + _decision[0])
-            github.make_issue(title=_decision[1], body=_decision[3])
+            #github.make_issue(title=_decision[1], body=_decision[3])
     logging.info('--------------- DONE -------------------')
 
 
