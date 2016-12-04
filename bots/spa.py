@@ -20,7 +20,7 @@ def parse_news(item):
     return item_parsed
 
 
-def retrieve_news(person=0, royal=0, last_id=-1):
+def retrieve_news(person=0, royal=0, cabinet=0,  last_id=-1):
     '''Retrieve news for person or royal
     person 1= king, 2= crown prince and 3= deputy crown prince
     if royal is = 1 news will be retriveved
@@ -33,7 +33,7 @@ def retrieve_news(person=0, royal=0, last_id=-1):
     page = 1
     while (page <= MAX_PAGES_TO_SEARCH and not found):
         url = ("http://www.spa.gov.sa/ajax/listnews.php?sticky={}&cat=0&cabine"
-        "t=0&royal={}&lang=ar&pg={}".format(person, royal,  page))
+        "t={}&royal={}&lang=ar&pg={}".format(person, cabinet, royal,  page))
         try:
             html = urlopen(url)
             soup = BeautifulSoup(html, "html.parser")
@@ -67,6 +67,20 @@ def retrieve_detail(item):
     return item
 
 
+def royal_order(last_id=-1):
+    '''Retrive royal orders
+    if last_id not defiend it will return the max
+    return list of royal orders tuples up to MAX_PAGES_TO_SEARCH (page=10)
+    [(id, title, url, text)...]
+    '''
+    orders = []
+    _news = retrieve_news(royal=1, last_id=last_id)
+    for item in _news:
+        _detail = retrieve_detail(item)
+        orders.append(_detail)
+    return orders
+
+
 def cabinet_decision(last_id=-1):
     '''Retrive cabinet decisions
     if last_id not defiend it will return the max
@@ -74,7 +88,7 @@ def cabinet_decision(last_id=-1):
     [(id, title, url, text)...]
     '''
     decisions = []
-    _news = retrieve_news(royal=1, last_id=last_id)
+    _news = retrieve_news(cabinet=1, last_id=last_id)
     for item in _news:
         _detail = retrieve_detail(item)
         decisions.append(_detail)

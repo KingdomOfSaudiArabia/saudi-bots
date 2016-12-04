@@ -7,6 +7,7 @@ access_token =
 access_token_secret =
 last_arrival_id =
 last_tweet_id =
+last_royal_order_id = 
 last_cabinet_decision_id =
 github_username =
 github_password =

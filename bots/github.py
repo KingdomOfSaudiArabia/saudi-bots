@@ -14,15 +14,12 @@ config.read(configfile)
 # repository to add issue to)
 USERNAME = config.get('King', 'github_username')
 PASSWORD = config.get('King', 'github_password')
-
-# The repository to add this issue to
 REPO_OWNER = 'KingdomOfSaudiArabia'
-REPO_NAME = 'cabinet-decisions'
 
-def make_issue(title, body=None, assignee=None, milestone=None, labels=[]):
+def make_issue(repo, title, body=None, assignee=None, milestone=None, labels=[]):
     '''Create an issue on github.com using the given parameters.'''
     # Our url to create issues via POST
-    url = 'https://api.github.com/repos/%s/%s/issues' % (REPO_OWNER, REPO_NAME)
+    url = 'https://api.github.com/repos/%s/%s/issues' % (REPO_OWNER, repo)
     # Create an authenticated session to create the issue
     session = requests.session()
     session.auth = (USERNAME, PASSWORD)

@@ -24,6 +24,7 @@ consumer_key = config.get('Twitter', 'consumer_key')
 consumer_secret = config.get('Twitter', 'consumer_secret')
 last_arrival_id = config.get('King', 'last_arrival_id')
 last_tweet_id = config.get('King', 'last_tweet_id')
+last_royal_order_id = config.get('King', 'last_royal_order_id')
 last_cabinet_decision_id = config.get('King', 'last_cabinet_decision_id')
 
 # tweepy auth
@@ -54,6 +55,13 @@ def get_leave():
 def get_timeline(person, last_id):
     timeline = api.user_timeline(person, since_id=last_id)
     return timeline
+
+
+def get_royal_order():
+    orders = []
+    if int(last_royal_order_id) > 0:
+        orders = spa.royal_order(last_id=int(last_royal_order_id))
+    return orders
 
 
 def get_cabinet_decision():
@@ -132,7 +140,26 @@ def run():
             logging.info('retweeting: ' + _tweet.id_str)
             retweet_with_comment('KingSalman', _tweet.id, 'قمت بكتابة هذه التغريدة:')
 
-    # if there is a new cabinet desision tweet it and add ticket on github repo
+    # if there is a new royal order tweet it and add ticket on github repo royal-orders
+    # and update the last_royal_order_id 
+    logging.info('Checking new royal order...')
+    orders = get_royal_order()
+    if orders:
+        logging.info('Found new royal order: ' + str(len(orders)))
+        logging.info('Updating config for last_royal_order_id to: ' + str(orders[0][0]))
+        update_config('King', 'last_royal_order_id', orders[0][0])
+        for _order in reversed(orders):
+            _title = _order[1]
+            if len(_title) > 107:
+                _title = _title[:len(_title)-(len(_title)-104)]
+                _title = _title + '...'
+            _tweet_text = 'أمرت بـ: ' + _title
+            logging.info('tweeting: ' + _tweet_text)
+            tweet(_tweet_text, _order[2])
+            logging.info('Creating github issue for: ' + _order[0])
+            github.make_issue(repo='royal-orders', title=_order[1], body=_order[3])
+   
+   # if there is a new cabinet desision tweet it and add ticket on github repo
     # and update the last_cabinet_desisoin_id 
     logging.info('Checking new cabinet desison...')
     decisions = get_cabinet_decision()
@@ -145,11 +172,11 @@ def run():
             if len(_title) > 107:
                 _title = _title[:len(_title)-(len(_title)-104)]
                 _title = _title + '...'
-            _tweet_text = 'أمرت بـ: ' + _title
+            _tweet_text = 'قررنا: ' + _title
             logging.info('tweeting: ' + _tweet_text)
             tweet(_tweet_text, _decision[2])
             logging.info('Creating github issue for: ' + _decision[0])
-            github.make_issue(title=_decision[1], body=_decision[3])
+            github.make_issue(repo='cabinet-decisions' ,title=_decision[1], body=_decision[3])
     logging.info('--------------- DONE -------------------')
 
 
