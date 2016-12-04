@@ -11,12 +11,3 @@ last_cabinet_decision_id =
 github_username =
 github_password =
 
-[Crown Prince]
-arrival_last_id =
-access_token =
-access_token_secret =
-
-[Deputy Crown Prince]
-arrival_last_id =
-access_token =
-access_token_secret = 
