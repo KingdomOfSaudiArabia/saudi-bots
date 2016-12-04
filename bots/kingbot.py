@@ -122,9 +122,9 @@ def run():
                 _title = _title + '...'
             _tweet_text = 'أمرت بـ: ' + _title
             logging.info('tweeting: ' + _tweet_text)
-            #tweet(_tweet_text, _decision[2])
+            tweet(_tweet_text, _decision[2])
             logging.info('Creating github issue for: ' + _decision[0])
-            #github.make_issue(title=_decision[1], body=_decision[3])
+            github.make_issue(title=_decision[1], body=_decision[3])
     logging.info('--------------- DONE -------------------')
 
 
